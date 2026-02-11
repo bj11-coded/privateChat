@@ -10,6 +10,7 @@ const sessionMiddleware = session({
   store: MongoStore.create({
     mongoUrl: process.env.MONGO_URL,
     collectionName: "sessions",
+    touchAfter: 24 * 60 * 60, // lazy updates
   }),
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,

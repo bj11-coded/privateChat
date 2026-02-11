@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
     profilePicture:{
         type:String,
         default:profilePicture[Math.floor(Math.random(profilePicture.length) * 5)],
+    },
+    isOnline:{
+        type:Boolean,
+        default:false
     }
 },{timestamps:true})
 

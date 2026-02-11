@@ -66,12 +66,14 @@ export const LoginUser = async (req, res) => {
       });
     }
 
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    // const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+    //   expiresIn: "1d",
+    // });
 
     // set the session
     req.session.userId = user._id;
+    user.isOnline = true;
+    await user.save();
 
     res.status(200).json({
       message: "User logged in successfully",
@@ -80,8 +82,8 @@ export const LoginUser = async (req, res) => {
         _id: user._id,
         username: user.username,
         email: user.email,
+        isOnline: user.isOnline
       },
-      token: token,
     });
   } catch (error) {
     res.status(500).json({

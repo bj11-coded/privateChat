@@ -3,9 +3,25 @@ import dotenv from "dotenv";
 import UserRoutes from "./src/routers/user.routes.js";
 import mongooseDB from "./src/config/db.js";
 import sessionMiddleware from "./src/middleware/session.js";
+
+// config the socketio
+import { Server } from "socket.io";
+import http from "http";
+import { socketSetup } from "./src/utils/socketHandler.js";
+
 dotenv.config();
 
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
+});
+socketSetup(io);
+
 const PORT = process.env.PORT || 3000;
 
 mongooseDB();
