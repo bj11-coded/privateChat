@@ -6,8 +6,8 @@ let allUsers = [];
 let messages = [];
 let typingTimeout = null;
 
-const API_BASE = "http://localhost:4001/api";
-const SOCKET_URL = "http://localhost:4001";
+const API_BASE = "http://localhost:4002";
+const SOCKET_URL = "http://localhost:4002";
 
 // ===== Initialization =====
 document.addEventListener("DOMContentLoaded", () => {
