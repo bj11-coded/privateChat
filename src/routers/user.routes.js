@@ -10,6 +10,7 @@ import {
   LoginUser,
   LogoutUser,
 } from "../controllers/auth.controller.js";
+import { getMessage } from "../controllers/message.controller.js";
 
 const router = express.Router();
 
@@ -22,5 +23,8 @@ router.delete("/delete/:id", deleteUser);
 router.post("/register", RegisterUser);
 router.post("/login", LoginUser);
 router.post("/logout", LogoutUser);
+
+// messages
+router.get("/messages/:id", getMessage);
 
 export default router;

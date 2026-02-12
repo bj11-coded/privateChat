@@ -36,7 +36,7 @@ export const getOnlineUser = async (req, res) => {
       .select("username profilePicture isOnline");
 
     if (!onlineUser) {
-      res.status(404).json({
+      return res.status(404).json({
         message: "No online users found",
         success: false,
       });

@@ -29,12 +29,15 @@ app.use(sessionMiddleware);
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files from view folder
+app.use(express.static("view"));
+
 app.use("/api/users", UserRoutes);
 
 app.use("/", (req, res) => {
-  res.send("Hello World....");
+  res.sendFile("view/index.html");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+server.listen(PORT, () => {
+  console.log(`Server is running on port http://localhost:${PORT}`);
 });

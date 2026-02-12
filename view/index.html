@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Private Chat - Real-time Messaging</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"></script>
+  </head>
+  <body>
+    <!-- Authentication Screen -->
+    <div id="auth-screen" class="auth-screen">
+      <div class="auth-container">
+        <div class="auth-header">
+          <div class="logo">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <circle cx="24" cy="24" r="20" fill="url(#gradient1)" />
+              <path
+                d="M16 20C16 17.7909 17.7909 16 20 16H28C30.2091 16 32 17.7909 32 20V26C32 28.2091 30.2091 30 28 30H24L18 34V30C16.8954 30 16 29.1046 16 28V20Z"
+                fill="white"
+              />
+              <defs>
+                <linearGradient id="gradient1" x1="4" y1="4" x2="44" y2="44">
+                  <stop offset="0%" stop-color="#667eea" />
+                  <stop offset="100%" stop-color="#764ba2" />
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <h1>Private Chat</h1>
+          <p>Connect with your friends in real-time</p>
+        </div>
+
+        <!-- Login Form -->
+        <div id="login-form" class="auth-form">
+          <h2>Welcome Back</h2>
+          <div class="input-group">
+            <label for="login-email">Email</label>
+            <input
+              type="email"
+              id="login-email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="login-password">Password</label>
+            <input
+              type="password"
+              id="login-password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+          <button class="btn-primary" onclick="handleLogin()">Sign In</button>
+          <p class="auth-switch">
+            Don't have an account?
+            <a href="#" onclick="showRegister()">Sign Up</a>
+          </p>
+          <div id="login-error" class="error-message"></div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" class="auth-form" style="display: none">
+          <h2>Create Account</h2>
+          <div class="input-group">
+            <label for="register-username">Username</label>
+            <input
+              type="text"
+              id="register-username"
+              placeholder="Choose a username"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="register-email">Email</label>
+            <input
+              type="email"
+              id="register-email"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <label for="register-password">Password</label>
+            <input
+              type="password"
+              id="register-password"
+              placeholder="Create a password"
+              required
+            />
+          </div>
+          <button class="btn-primary" onclick="handleRegister()">
+            Sign Up
+          </button>
+          <p class="auth-switch">
+            Already have an account?
+            <a href="#" onclick="showLogin()">Sign In</a>
+          </p>
+          <div id="register-error" class="error-message"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="chat-screen" style="display: none">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <div class="user-profile">
+            <img id="current-user-avatar" src="" alt="Avatar" class="avatar" />
+            <div class="user-info">
+              <h3 id="current-user-name">User</h3>
+              <span class="status-indicator online">Online</span>
+            </div>
+          </div>
+          <button class="btn-icon" onclick="handleLogout()" title="Logout">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 11-2 0V4H5v12h10v-2a1 1 0 112 0v3a1 1 0 01-1 1H4a1 1 0 01-1-1V3z"
+              />
+              <path
+                d="M11 10a1 1 0 011-1h5.586l-1.293-1.293a1 1 0 011.414-1.414l3 3a1 1 0 010 1.414l-3 3a1 1 0 01-1.414-1.414L17.586 11H12a1 1 0 01-1-1z"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div class="search-container">
+          <input
+            type="text"
+            id="user-search"
+            placeholder="Search users..."
+            onkeyup="filterUsers()"
+          />
+        </div>
+
+        <div class="users-list" id="users-list">
+          <!-- Users will be dynamically loaded here -->
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="chat-area">
+        <!-- Chat Header -->
+        <div class="chat-header">
+          <div class="chat-user-info">
+            <img id="chat-user-avatar" src="" alt="Avatar" class="avatar" />
+            <div>
+              <h3 id="chat-user-name">Select a user to start chatting</h3>
+              <span id="chat-user-status" class="typing-indicator"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Messages Container -->
+        <div class="messages-container" id="messages-container">
+          <div class="empty-state">
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+              <circle cx="60" cy="60" r="50" fill="#f0f0f0" />
+              <path
+                d="M40 50C40 45.5817 43.5817 42 48 42H72C76.4183 42 80 45.5817 80 50V66C80 70.4183 76.4183 74 72 74H62L50 84V74C47.7909 74 46 72.2091 46 70V50Z"
+                fill="#667eea"
+                opacity="0.3"
+              />
+            </svg>
+            <h3>Start a Conversation</h3>
+            <p>Select a user from the sidebar to begin chatting</p>
+          </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="message-input-container">
+          <div class="message-input-wrapper">
+            <textarea
+              id="message-input"
+              placeholder="Type a message..."
+              rows="1"
+              onkeydown="handleKeyPress(event)"
+              oninput="handleTyping()"
+            ></textarea>
+            <button class="btn-send" onclick="sendMessage()" id="send-button">
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
