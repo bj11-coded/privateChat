@@ -6,8 +6,8 @@ let allUsers = [];
 let messages = [];
 let typingTimeout = null;
 
-const API_BASE = "http://localhost:4002";
-const SOCKET_URL = "http://localhost:4002";
+const API_BASE = "http://localhost:4001";
+const SOCKET_URL = "http://localhost:4001";
 
 // ===== Initialization =====
 document.addEventListener("DOMContentLoaded", () => {
@@ -287,7 +287,7 @@ async function selectUser(userId) {
 // ===== Message Functions =====
 async function loadMessages(userId) {
   try {
-    const response = await fetch(`${API_BASE}/users/messages/${userId}`, {
+    const response = await fetch(`${API_BASE}/messages/${userId}`, {
       credentials: "include",
     });
 

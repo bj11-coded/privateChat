@@ -9,6 +9,7 @@ import MessageRoutes from "./src/routers/message.routes.js";
 import { Server } from "socket.io";
 import http from "http";
 import { socketSetup } from "./src/utils/socketHandler.js";
+import { socketAuthMiddleware } from "./src/middleware/socketAuth.js";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -26,6 +27,11 @@ const io = new Server(server, {
     credentials: true,
   },
 });
+
+// Apply socket authentication middleware
+socketAuthMiddleware(io);
+
+// Setup socket event handlers
 socketSetup(io);
 
 const PORT = process.env.PORT || 3000;
